@@ -1,6 +1,62 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separateMultipleMajorReleases",
+    ":separatePatchReleases"
+  ],
+ 
+  "enabledManagers": ["maven"],
+  "timezone": "Asia/Kolkata",
+ 
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+ 
+  "rebaseWhen": "conflicted",
+  "rangeStrategy": "replace",
+ 
+  "dependencyDashboard": true,
+ 
+  "packageRules": [
+ 
+    {
+      "description": "Auto-merge patch updates (safe updates)",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "requiredStatusChecks": ["build"]
+    },
+ 
+    {
+      "description": "Group minor updates",
+      "matchUpdateTypes": ["minor"],
+      "groupName": "Minor Updates",
+      "automerge": false
+    },
+ 
+    {
+      "description": "Major updates require manual approval",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false
+    },
+ 
+    {
+      "description": "Group Spring Boot dependencies",
+      "matchPackagePatterns": ["^org.springframework.boot"],
+      "groupName": "Spring Boot Dependencies"
+    },
+ 
+    {
+      "description": "Separate security updates",
+      "matchManagers": ["maven"],
+      "matchDepTypes": ["dependencies", "dependencyManagement"],
+      "vulnerabilityAlerts": true,
+      "groupName": "Security Updates",
+      "automerge": false
+    }
   ]
 }
